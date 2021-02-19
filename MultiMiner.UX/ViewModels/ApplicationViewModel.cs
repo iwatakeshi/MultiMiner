@@ -2213,17 +2213,15 @@ namespace MultiMiner.UX.ViewModels
 
         public void InstallBackendMinerLocally(MinerDescriptor miner)
         {
-            string minerName = miner.Name;
-
             if (ProgressStarted != null)
                 ProgressStarted(this, new ProgressEventArgs
                 {
-                    Text = String.Format("Downloading and installing {0} from {1}", minerName, new Uri(miner.Url).Authority)
+                    Text = !string.IsNullOrEmpty(miner.Url) ? String.Format("Downloading and installing {0} from {1}", miner.Name, new Uri(miner.Url).Authority) : string.Format("Downloading and installing {0}", miner.Name)
                 });
 
             try
             {
-                string minerPath = System.IO.Path.Combine("Miners", minerName);
+                string minerPath = System.IO.Path.Combine("Miners", miner.Name);
                 string destinationFolder = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, minerPath);
                 try
                 {
