@@ -2,6 +2,7 @@
 using MultiMiner.Utility.OS;
 using System;
 using System.IO;
+using System.Linq;
 
 namespace MultiMiner.Engine
 {
@@ -61,7 +62,17 @@ namespace MultiMiner.Engine
 
         private static string GetPathToMinerOnWindows(string minerName, string minerFileName)
         {
-            return Path.Combine(Path.Combine(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Miners"), minerName), minerFileName + ".exe");
+            var baseDir = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "Miners");
+            var minerDir = Path.Combine(baseDir, minerName);
+            var exe = Path.Combine(minerDir, minerFileName + ".exe");
+
+            // Find the executable
+            if (!File.Exists(exe) && Directory.Exists(minerDir)) {
+                exe = (from file in Directory.GetFiles(minerDir, "*.exe").ToList()
+                       where file.ToLower() == string.Join(minerFileName, "exe").ToLower()
+                       select file).First();
+            }
+            return exe;
         }
     }
 }
