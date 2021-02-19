@@ -13,8 +13,7 @@ namespace MultiMiner.NiceHash
 {
     public class ApiContext : IApiContext
     {
-        public IEnumerable<MultipoolInformation> GetMultipoolInformation(string userAgent = "")
-        {
+        public IEnumerable<MultipoolInformation> GetMultipoolInformation(string userAgent = "") {
             WebClient client = new ApiWebClient();
             if (!string.IsNullOrEmpty(userAgent))
                 client.Headers.Add("user-agent", userAgent);
@@ -30,8 +29,7 @@ namespace MultiMiner.NiceHash
 
             List<MultipoolInformation> result = new List<MultipoolInformation>();
 
-            foreach (JToken jToken in jsonArray)
-            {
+            foreach (JToken jToken in jsonArray) {
                 MultipoolInformation multipoolInformation = new MultipoolInformation();
                 if (multipoolInformation.PopulateFromJson(jToken))
                     result.Add(multipoolInformation);
@@ -39,8 +37,7 @@ namespace MultiMiner.NiceHash
 
             MultipoolInformation btcInformation = result.Single(mpi => mpi.Algorithm.Equals(AlgorithmNames.SHA256));
 
-            foreach (MultipoolInformation otherInformation in result)
-            {
+            foreach (MultipoolInformation otherInformation in result) {
                 KnownAlgorithm knownAlgorithm = KnownAlgorithms.Algorithms.Single(ka => ka.Name.Equals(otherInformation.Algorithm));
                 otherInformation.Profitability = ((otherInformation.Price * knownAlgorithm.Multiplier) / btcInformation.Price) * PoolProfitability * 100;
             }
@@ -50,18 +47,15 @@ namespace MultiMiner.NiceHash
 
         private const double PoolProfitability = 1.05;
 
-        public string GetApiUrl()
-        {
-            return String.Format(@"https://www.nicehash.com/api?method=stats.global.current");
+        public string GetApiUrl() {
+            return String.Format(@"https://api2.nicehash.com/main/api/v2/public/stats/global/current");
         }
 
-        public string GetInfoUrl()
-        {
-            return String.Format(@"https://nicehash.com/index.jsp?p=api");
+        public string GetInfoUrl() {
+            return String.Format(@"https://api2.nicehash.com/main/api/v2/public/simplemultialgo/info");
         }
 
-        public string GetApiName()
-        {
+        public string GetApiName() {
             return "NiceHash.com";
         }
     }
